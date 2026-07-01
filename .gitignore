@@ -1,0 +1,21 @@
+# OS / sistema
+Thumbs.db
+ehthumbs.db
+Desktop.ini
+.DS_Store
+$RECYCLE.BIN/
+
+# Editores
+.vscode/
+.idea/
+*.swp
+*~
+
+# Ferramentas / sessões locais
+.claude/
+
+# Arquivos de produção pesados (não versionar)
+*.prproj
+*.aep
+*.pptx
+*.psd
