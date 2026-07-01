@@ -1651,8 +1651,12 @@ whenVisible('topChart',()=>{
     data:{labels,datasets:[{data:vals,borderRadius:8,maxBarThickness:30,
       backgroundColor:(c)=>{const{ctx,chartArea}=c.chart;if(!chartArea)return BLUE;const g=ctx.createLinearGradient(chartArea.left,0,chartArea.right,0);g.addColorStop(0,BLUE);g.addColorStop(1,'#3d78ff');return g;}}]},
     options:{indexAxis:'y',responsive:true,maintainAspectRatio:false,animation:anim({duration:1200}),
-      plugins:{legend:{display:false},tooltip:{callbacks:{label:x=>x.raw.toLocaleString('pt-BR')+' views'}}},
-      scales:{x:{ticks:{callback:v=>(v/1000)+'k',color:INK},grid:{color:'rgba(8,24,63,.08)'}},y:{ticks:{color:INK,font:{weight:'600',size:11.5}},grid:{display:false}}}}});
+      plugins:{legend:{display:false},tooltip:{callbacks:{title:x=>v[x[0].dataIndex].title,label:x=>x.raw.toLocaleString('pt-BR')+' views'}}},
+      scales:{x:{ticks:{callback:v=>(v/1000)+'k',color:INK},grid:{color:'rgba(8,24,63,.08)'}},
+        y:{ticks:{color:INK,font:{weight:'600',size:11.5},
+          /* trunca o rótulo conforme a largura real do gráfico (~42% p/ os títulos) */
+          callback:function(val){const l=this.getLabelForValue(val);const max=Math.max(14,Math.floor(this.chart.width*0.42/6.5));return l.length>max?l.slice(0,max-1)+'…':l;}},
+        grid:{display:false}}}}});
 });
 
 // ---- Instagram charts ----
