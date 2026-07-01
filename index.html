@@ -90,7 +90,6 @@ h1,h2,h3,.display{font-family:'BenchNine','Montserrat',sans-serif;font-weight:70
 .dots a.active{background:var(--yellow);border-color:var(--yellow);transform:scale(1.35)}
 .dots.dark a{background:rgba(8,24,63,.25);border-color:rgba(8,24,63,.4)}
 .dots.dark a.active{background:var(--blue);border-color:var(--blue)}
-.brandmark{position:fixed;left:26px;top:20px;z-index:50;height:34px;opacity:.95;filter:drop-shadow(0 2px 6px rgba(0,0,0,.25))}
 .hint{position:fixed;color:var(--cream);bottom:16px;left:50%;transform:translateX(-50%);z-index:40;font-size:12px;letter-spacing:.2em;text-transform:uppercase;opacity:.55;animation:float 2.4s ease-in-out infinite}
 @keyframes float{0%,100%{transform:translateX(-50%) translateY(0)}50%{transform:translateX(-50%) translateY(6px)}}
 
@@ -199,7 +198,6 @@ h1,h2,h3,.display{font-family:'BenchNine','Montserrat',sans-serif;font-weight:70
 }
 @media (max-width:640px){
   .dots{display:none}
-  .brandmark{height:26px;left:16px;top:14px}
   .slide{padding-top:clamp(56px,10vh,80px);padding-bottom:clamp(56px,10vh,80px)}
 }
 @media (max-width:520px){
@@ -212,7 +210,7 @@ h1,h2,h3,.display{font-family:'BenchNine','Montserrat',sans-serif;font-weight:70
   html,body{height:auto;overflow:visible;background:#fff}
   .scroller{height:auto;overflow:visible;display:block}
   .slide{min-height:720px;height:720px;page-break-after:always;break-after:page;scroll-snap-align:none}
-  .nav,.dots,.hint,.brandmark{display:none!important}
+  .nav,.dots,.hint{display:none!important}
   .reveal{opacity:1!important;transform:none!important}
   .bg-blue,.bg-green{-webkit-print-color-adjust:exact;print-color-adjust:exact}
   *{-webkit-print-color-adjust:exact;print-color-adjust:exact}
@@ -222,7 +220,7 @@ h1,h2,h3,.display{font-family:'BenchNine','Montserrat',sans-serif;font-weight:70
 body.export{overflow:visible}
 body.export .scroller{height:auto;overflow:visible;scroll-snap-type:none;display:block}
 body.export .slide{min-height:0;height:900px;scroll-snap-align:none;page-break-after:always}
-body.export .nav,body.export .dots,body.export .hint,body.export .brandmark{display:none!important}
+body.export .nav,body.export .dots,body.export .hint{display:none!important}
 body.export .reveal{opacity:1!important;transform:none!important}
 
 #heroPhoto{opacity:0;pointer-events:none;}
@@ -234,7 +232,6 @@ body.export .reveal{opacity:1!important;transform:none!important}
 <body>
 <div class="nav"><div class="nav-fill" id="navfill"></div></div>
 <div class="dots" id="dots"></div>
-<img class="brandmark" id="brandmark" alt="Frotas Pelo Mundo">
 <div class="hint" id="hint">↓ role ou use as setas</div>
 
 <div class="scroller" id="scroller">
@@ -1500,7 +1497,7 @@ const DATA = {
 // inject assets
 document.getElementById('heroPhoto').style.backgroundImage='url('+ASSETS.hero+')';
 document.getElementById('ctaPhoto').style.backgroundImage='url('+ASSETS.hero+')';
-['heroLogo','brandmark','ctaLogo'].forEach(id=>document.getElementById(id).src=ASSETS.logo);
+['heroLogo','ctaLogo'].forEach(id=>document.getElementById(id).src=ASSETS.logo);
 
 // palette
 const BLUE='#024bff',CREAM='#f4efdf',YELLOW='#f2e140',SKY='#7bcceb',GREEN='#243f28',INK='#08183f';
@@ -1526,7 +1523,6 @@ function onScroll(){
   dots.forEach((d,i)=>d.classList.toggle('active',i===idx));
   const theme=slides[idx].dataset.theme;
   dotsWrap.classList.toggle('dark',theme==='light');
-  document.getElementById('brandmark').style.opacity=(theme==='light'||idx===0)?'0':'.95';
   document.getElementById('hint').style.opacity=st>40?'0':'.55';
 }
 scroller.addEventListener('scroll',onScroll,{passive:true});
