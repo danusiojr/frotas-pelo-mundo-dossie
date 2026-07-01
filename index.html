@@ -422,7 +422,7 @@ body.export .reveal{opacity:1!important;transform:none!important}
       <div class="grid-2" style="margin-top:24px;align-items:center">
         <div class="card reveal d2">
           <h3>Visualizações por formato</h3>
-          <div class="csub">Stories, Reels e Posts — últimos 90 dias</div>
+          <div class="csub">Stories e Reels — últimos 90 dias</div>
           <div class="chart-wrap" style="height:clamp(220px,32vh,330px)"><canvas id="igContentChart"></canvas></div>
         </div>
         <div class="reveal d3">
@@ -1663,8 +1663,8 @@ whenVisible('topChart',()=>{
 // content type (Stories / Reels / Posts)
 whenVisible('igContentChart',()=>{
   new Chart(document.getElementById('igContentChart'),{type:'bar',
-    data:{labels:['Stories','Reels','Posts'],datasets:[{data:[7800000,1900000,115000],borderRadius:8,maxBarThickness:46,
-      backgroundColor:[BLUE,'#3d78ff','#93b4ff']}]},
+    data:{labels:['Stories','Reels'],datasets:[{data:[7800000,1900000],borderRadius:8,maxBarThickness:46,
+      backgroundColor:[BLUE,'#3d78ff']}]},
     options:{indexAxis:'y',responsive:true,maintainAspectRatio:false,animation:anim({duration:1100}),
       plugins:{legend:{display:false},tooltip:{callbacks:{label:x=>(x.raw>=1e6?(x.raw/1e6).toLocaleString('pt-BR',{maximumFractionDigits:1})+' mi':(x.raw/1000).toFixed(0)+' mil')+' views'}}},
       scales:{x:{ticks:{color:INK,callback:v=>v>=1e6?(v/1e6)+' mi':(v/1000)+'k'},grid:{color:'rgba(8,24,63,.08)'}},y:{ticks:{color:INK,font:{weight:'700',size:14}},grid:{display:false}}}}});
