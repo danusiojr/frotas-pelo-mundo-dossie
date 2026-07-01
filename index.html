@@ -61,9 +61,9 @@ body{
   -webkit-font-smoothing:antialiased;
 }
 h1,h2,h3,.display{font-family:'BenchNine','Montserrat',sans-serif;font-weight:700;line-height:.95;letter-spacing:.01em}
-.scroller{height:100vh;overflow-y:scroll;scroll-snap-type:y mandatory;scroll-behavior:smooth}
+.scroller{height:100vh;height:100dvh;overflow-y:auto;scroll-snap-type:y proximity;scroll-behavior:smooth}
 .slide{
-  min-height:100vh; scroll-snap-align:start; position:relative;
+  min-height:100vh; min-height:100svh; scroll-snap-align:start; position:relative;
   display:flex; flex-direction:column; justify-content:center;
   padding:clamp(32px,6vw,96px); overflow:hidden;
 }
@@ -100,7 +100,7 @@ h1,h2,h3,.display{font-family:'BenchNine','Montserrat',sans-serif;font-weight:70
 #hero .scrim{position:absolute;inset:0;z-index:1;background:
   linear-gradient(90deg,rgba(1,32,110,.92) 0%,rgba(1,40,140,.55) 45%,rgba(1,48,168,.05) 75%),
   linear-gradient(0deg,rgba(1,25,80,.85) 0%,rgba(0,0,0,0) 55%)}
-#hero .logo{width:clamp(20px,48vw,220px);margin-bottom:200px;filter:drop-shadow(0 8px 22px rgba(0,0,0,.35))}
+#hero .logo{width:clamp(20px,48vw,220px);margin-bottom:clamp(48px,20vh,200px);filter:drop-shadow(0 8px 22px rgba(0,0,0,.35))}
 #hero h1{font-size:clamp(46px,9vw,132px);color:var(--cream);text-transform:uppercase}
 #hero .tag{font-family:'BenchNine';font-size:clamp(20px,3.2vw,42px);letter-spacing:.14em;color:var(--yellow);text-transform:uppercase;margin-top:6px}
 #hero .sub{max-width:620px;margin-top:22px;font-size:clamp(15px,1.5vw,20px);line-height:1.5;opacity:.95}
@@ -191,6 +191,20 @@ h1,h2,h3,.display{font-family:'BenchNine','Montserrat',sans-serif;font-weight:70
 .d1{transition-delay:.08s}.d2{transition-delay:.16s}.d3{transition-delay:.24s}.d4{transition-delay:.32s}.d5{transition-delay:.4s}
 
 .footer-num{position:absolute;right:clamp(20px,4vw,60px);bottom:20px;font-size:12px;letter-spacing:.2em;opacity:.4;z-index:3}
+
+/* RESPONSIVO: em telas estreitas ou baixas o conteúdo pode exceder 1 viewport,
+   então o snap é desligado e a página rola livre como um documento */
+@media (max-width:880px),(max-height:640px){
+  .scroller{scroll-snap-type:none}
+}
+@media (max-width:640px){
+  .dots{display:none}
+  .brandmark{height:26px;left:16px;top:14px}
+  .slide{padding-top:clamp(56px,10vh,80px);padding-bottom:clamp(56px,10vh,80px)}
+}
+@media (max-width:520px){
+  .kpis{grid-template-columns:1fr}
+}
 
 /* PRINT */
 @media print{
@@ -1500,11 +1514,15 @@ const dotsWrap=document.getElementById('dots');
 slides.forEach((s,i)=>{const a=document.createElement('a');a.onclick=()=>slides[i].scrollIntoView();dotsWrap.appendChild(a);});
 const dots=[...dotsWrap.children];
 const navfill=document.getElementById('navfill');
+function currentSlide(){
+  const mid=scroller.clientHeight*0.5;
+  for(let i=slides.length-1;i>=0;i--){ if(slides[i].getBoundingClientRect().top<=mid) return i; }
+  return 0;
+}
 function onScroll(){
   const st=scroller.scrollTop, h=scroller.scrollHeight-scroller.clientHeight;
   navfill.style.width=(100*st/h)+'%';
-  let idx=Math.round(st/scroller.clientHeight);
-  idx=Math.max(0,Math.min(slides.length-1,idx));
+  const idx=currentSlide();
   dots.forEach((d,i)=>d.classList.toggle('active',i===idx));
   const theme=slides[idx].dataset.theme;
   dotsWrap.classList.toggle('dark',theme==='light');
@@ -1513,9 +1531,19 @@ function onScroll(){
 }
 scroller.addEventListener('scroll',onScroll,{passive:true});
 window.addEventListener('keydown',e=>{
-  const cur=Math.round(scroller.scrollTop/scroller.clientHeight);
-  if(['ArrowDown','ArrowRight','PageDown',' '].includes(e.key)){e.preventDefault();slides[Math.min(slides.length-1,cur+1)].scrollIntoView();}
-  if(['ArrowUp','ArrowLeft','PageUp'].includes(e.key)){e.preventDefault();slides[Math.max(0,cur-1)].scrollIntoView();}
+  const vh=scroller.clientHeight, cur=currentSlide(), r=slides[cur].getBoundingClientRect();
+  if(['ArrowDown','ArrowRight','PageDown',' '].includes(e.key)){
+    e.preventDefault();
+    const restante=r.bottom-vh; /* conteúdo do slide atual ainda fora da tela */
+    if(restante>40) scroller.scrollBy({top:Math.min(restante,vh*0.85),behavior:'smooth'});
+    else slides[Math.min(slides.length-1,cur+1)].scrollIntoView({behavior:'smooth'});
+  }
+  if(['ArrowUp','ArrowLeft','PageUp'].includes(e.key)){
+    e.preventDefault();
+    const acima=-r.top;
+    if(acima>40) scroller.scrollBy({top:-Math.min(acima,vh*0.85),behavior:'smooth'});
+    else slides[Math.max(0,cur-1)].scrollIntoView({behavior:'smooth'});
+  }
 });
 
 // ---- reveal + count-up ----
