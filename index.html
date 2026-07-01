@@ -1597,6 +1597,16 @@ whenVisible('growthChart',()=>{
       scales:{y:{ticks:{callback:v=>(v/1000)+'k',color:INK},grid:{color:'rgba(8,24,63,.08)'}},x:{ticks:{color:INK,font:{weight:'700',size:14}},grid:{display:false}}}}});
 });
 
+// quebra rótulos do eixo Y em linhas conforme a largura real do gráfico (px = largura média do caractere)
+function wrapTick(label,chart,px){
+  const max=Math.max(9,Math.floor(chart.width*0.4/px));
+  if(label.length<=max) return label;
+  const lines=[]; let cur='';
+  label.split(' ').forEach(w=>{ if(cur&&(cur+' '+w).length>max){lines.push(cur);cur=w;} else cur=cur?cur+' '+w:w; });
+  if(cur) lines.push(cur);
+  return lines;
+}
+
 // ctr comparison
 whenVisible('ctrChart',()=>{
   new Chart(document.getElementById('ctrChart'),{type:'bar',
@@ -1605,7 +1615,7 @@ whenVisible('ctrChart',()=>{
     options:{indexAxis:'y',responsive:true,maintainAspectRatio:false,animation:anim({duration:1200}),
       plugins:{legend:{display:false},tooltip:{callbacks:{label:x=>x.raw+'% CTR'}},
         datalabels:false},
-      scales:{x:{ticks:{callback:v=>v+'%',color:INK},grid:{color:'rgba(8,24,63,.08)'},max:7},y:{ticks:{color:INK,font:{weight:'700',size:14}},grid:{display:false}}}}});
+      scales:{x:{ticks:{callback:v=>v+'%',color:INK},grid:{color:'rgba(8,24,63,.08)'},max:7},y:{ticks:{color:INK,font:{weight:'700',size:14},callback:function(v){return wrapTick(this.getLabelForValue(v),this.chart,8);}},grid:{display:false}}}}});
 });
 
 // age
@@ -1639,7 +1649,7 @@ whenVisible('trafficChart',()=>{
       backgroundColor:[BLUE,'#3d78ff','#6f9bff','#93b4ff',SKY,'#b9d6ea']}]},
     options:{indexAxis:'y',responsive:true,maintainAspectRatio:false,animation:anim({duration:1100}),
       plugins:{legend:{display:false},tooltip:{callbacks:{label:x=>x.raw.toLocaleString('pt-BR')+' views'}}},
-      scales:{x:{ticks:{color:INK,callback:v=>(v/1000)+'k'},grid:{color:'rgba(8,24,63,.08)'}},y:{ticks:{color:INK,font:{weight:'700',size:13}},grid:{display:false}}}}});
+      scales:{x:{ticks:{color:INK,callback:v=>(v/1000)+'k'},grid:{color:'rgba(8,24,63,.08)'}},y:{ticks:{color:INK,font:{weight:'700',size:13},callback:function(v){return wrapTick(this.getLabelForValue(v),this.chart,7.5);}},grid:{display:false}}}}});
 });
 
 // top videos
